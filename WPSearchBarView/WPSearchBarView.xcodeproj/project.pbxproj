@@ -16,6 +16,8 @@
 		762981A91FE930F000A7CCD5 /* WPSearchBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 762981A81FE930F000A7CCD5 /* WPSearchBar.m */; };
 		762981AF1FE9351C00A7CCD5 /* UIView+WPVFramePropty.m in Sources */ = {isa = PBXBuildFile; fileRef = 762981AE1FE9351C00A7CCD5 /* UIView+WPVFramePropty.m */; };
 		762981B21FE955CD00A7CCD5 /* WPSearchBarTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 762981B11FE955CD00A7CCD5 /* WPSearchBarTextField.m */; };
+		76A7AB5B1FEAAB57008718E8 /* pl.png in Resources */ = {isa = PBXBuildFile; fileRef = 76A7AB591FEAAB57008718E8 /* pl.png */; };
+		76A7AB5C1FEAAB57008718E8 /* wx.png in Resources */ = {isa = PBXBuildFile; fileRef = 76A7AB5A1FEAAB57008718E8 /* wx.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,8 @@
 		762981AE1FE9351C00A7CCD5 /* UIView+WPVFramePropty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+WPVFramePropty.m"; sourceTree = "<group>"; };
 		762981B01FE955CD00A7CCD5 /* WPSearchBarTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WPSearchBarTextField.h; sourceTree = "<group>"; };
 		762981B11FE955CD00A7CCD5 /* WPSearchBarTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WPSearchBarTextField.m; sourceTree = "<group>"; };
+		76A7AB591FEAAB57008718E8 /* pl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pl.png; sourceTree = "<group>"; };
+		76A7AB5A1FEAAB57008718E8 /* wx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wx.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +76,8 @@
 				762981911FE92F5400A7CCD5 /* AppDelegate.m */,
 				762981931FE92F5400A7CCD5 /* ViewController.h */,
 				762981941FE92F5400A7CCD5 /* ViewController.m */,
+				76A7AB591FEAAB57008718E8 /* pl.png */,
+				76A7AB5A1FEAAB57008718E8 /* wx.png */,
 				762981961FE92F5400A7CCD5 /* Main.storyboard */,
 				762981991FE92F5400A7CCD5 /* Assets.xcassets */,
 				7629819B1FE92F5400A7CCD5 /* LaunchScreen.storyboard */,
@@ -152,7 +158,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76A7AB5C1FEAAB57008718E8 /* wx.png in Resources */,
 				7629819D1FE92F5400A7CCD5 /* LaunchScreen.storyboard in Resources */,
+				76A7AB5B1FEAAB57008718E8 /* pl.png in Resources */,
 				7629819A1FE92F5400A7CCD5 /* Assets.xcassets in Resources */,
 				762981981FE92F5400A7CCD5 /* Main.storyboard in Resources */,
 			);

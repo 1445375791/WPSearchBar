@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, WPSearchBarContentMode) {
+    WPSearchBarContentModeNever,
+    WPSearchBarContentModeWhileEditing,
+    WPSearchBarContentModeUnlessEditing,
+    WPSearchBarContentModeAlways
+};
+
 @protocol WPSearchBarDelegate;
 
 /**
@@ -26,25 +33,45 @@
 @property (nonatomic, strong) UIImageView *barRightIcon;
 
 /**
+ 搜索框右边点击操作按钮
+ */
+@property (nonatomic, strong) UIButton *barSearchButton;
+
+/**
  占位文字
  */
 @property (nonatomic, copy) NSString *barPlaceHolder;
+
+/**
+ 输入框搜索文字
+ */
+@property (nonatomic, copy) NSString *barSearchInfoContent;
 
 /**
  代理方法
  */
 @property (nonatomic, weak) id<WPSearchBarDelegate> searchBarDelegate;
 
+/**
+ 输入框文字字体
+ */
+@property (nonatomic, strong) UIFont *barContentFont;
+
+/**
+ 输入框后出现的清除按钮样式
+ */
+@property (nonatomic, assign) WPSearchBarContentMode clearContentModel;
+
 
 /**
  初始化创建方法
  
  @param frame 试图的位置
- @param leftImage 左边的icon
- @param rightImage 右边的icon
+ @param leftImageName 左边的icon
+ @param rightImageName 右边的icon
  @return WPSearchBar 对象
  */
-+ (WPSearchBar *)initTheSearchBarWithFrame:(CGRect)frame leftViewImage:(UIImage *)leftImage rightViewImage:(UIImage *)rightImage;
++ (WPSearchBar *)initTheSearchBarWithFrame:(CGRect)frame leftViewImage:(NSString *)leftImageName rightViewImage:(NSString *)rightImageName;
 
 
 @end
@@ -62,6 +89,9 @@
 
 - (BOOL)wpSearchBar:(WPSearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
 
-- (void)wpSearchBarSearchButtonClicked:(WPSearchBar *)searchBar;   
+- (void)wpSearchBarSearchButtonClicked:(WPSearchBar *)searchBar;
+
+- (void)wpSearchBarClickClearInfoButton:(WPSearchBar *)searchBar;
 
 @end
+
