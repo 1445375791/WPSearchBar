@@ -36,7 +36,7 @@
     if (self) {
         _searchBarFrame = frame;
         _searchBackView = [[UIView alloc] initWithFrame:self.wpViewBounds];
-        _searchBackView.layer.borderColor = [UIColor blackColor].CGColor;
+        _searchBackView.layer.borderColor = [UIColor clearColor].CGColor;
         _searchBackView.layer.borderWidth = 0.5;
         [self addSubview:_searchBackView];
         CGFloat margin = 10;
@@ -66,7 +66,10 @@
         _barTextField = [[WPSearchBarTextField alloc] initWithFrame:CGRectMake(_barLeftIcon.wpViewMaxX + 5, 5, _searchBackView.wpViewWidth - _barLeftIcon.wpViewWidth - _barRightIcon.wpViewWidth - margin , _searchBackView.wpViewHeight - 10)];
         _barTextField.delegate = self;
         [_searchBackView addSubview:_barTextField];
+        _barKeyBoardReturnKeyCanDismiss = YES;
         
+        self.clipsToBounds = YES;
+        self.layer.cornerRadius = 3;
     }
     return self;
 }
@@ -91,6 +94,81 @@
     
     WPSearchBar *searchBar = [[WPSearchBar alloc] initWithFrame:frame leftIcon:leftImage rightIcon:rightImage];
     return searchBar;
+}
+
+/**
+ 给输入框左边图标添加点击事件
+ 
+ @param target 目标对象
+ @param clickMethod 执行的方法
+ */
+- (void)addBarLeftBarViewTarget:(id)target clickAction:(SEL)clickMethod {
+    [_barTextField resignFirstResponder];
+    if (target && [target respondsToSelector:clickMethod]) {
+        UITapGestureRecognizer *clickTap = [[UITapGestureRecognizer alloc] initWithTarget:target action:clickMethod];
+        _barLeftIcon.userInteractionEnabled = YES;
+        [_barLeftIcon addGestureRecognizer:clickTap];
+    }
+}
+
+/**
+ 给输入框右边的图标添加点击事件
+ 
+ @param target 目标对象
+ @param clickMethod 执行的方法
+ */
+- (void)addBarRightBarViewTarget:(id)target clickAction:(SEL)clickMethod {
+    [_barTextField resignFirstResponder];
+    if (target && [target respondsToSelector:clickMethod]) {
+        UITapGestureRecognizer *clickTap = [[UITapGestureRecognizer alloc] initWithTarget:target action:clickMethod];
+        _barRightIcon.userInteractionEnabled = YES;
+        [_barRightIcon addGestureRecognizer:clickTap];
+    }
+}
+
+/**
+ 开始编辑方法
+ 
+ @param beginEditingBlock beginEditingBlock
+ */
+- (void)wpSearchBarBeginEditing:(BarDidBeginEditingBlock)beginEditingBlock {
+    self.beginEditingBlock = beginEditingBlock;
+}
+
+/**
+ 结束编辑
+ 
+ @param endEditingBlock endEditingBlock
+ */
+- (void)wpSearchBarEndEditing:(BarDidEndEditingBlock)endEditingBlock {
+    self.endEditingBlock = endEditingBlock;
+}
+
+/**
+ 是否可以改变文字
+ 
+ @param shouldEditingBlock shouldEditingBlock
+ */
+- (void)wpSearchBarShouldEdit:(BarShouldChangeInfoBlock)shouldEditingBlock {
+    self.shouldChangeBlock = shouldEditingBlock;
+}
+
+/**
+ 点击搜索按钮
+ 
+ @param searchClickBlock searchClickBlock
+ */
+- (void)wpSearchBarClickSearchInfo:(BarSearchClickBlock)searchClickBlock {
+    self.clickSearchBlock = searchClickBlock;
+}
+
+/**
+ 点击清空内容
+ 
+ @param clearBlock clearBlock
+ */
+- (void)wpSearchBarClearInfo:(BarClickClearBlock)clearBlock {
+    self.clickClearBlock = clearBlock;
 }
 
 
@@ -144,51 +222,118 @@
     _barTextField.clearButtonMode = viewModel;
 }
 
+/**
+ 视图切圆角
+ */
+- (void)setWpSearchBarCornerRadius:(CGFloat)wpSearchBarCornerRadius {
+    self.layer.cornerRadius = wpSearchBarCornerRadius;
+    self.clipsToBounds = YES;
+    _wpSearchBarCornerRadius = wpSearchBarCornerRadius;
+}
+
+/**
+ 视图整体背景色
+ */
+- (void)setWpSearchBarAllBackColor:(UIColor *)wpSearchBarAllBackColor {
+    self.backgroundColor = wpSearchBarAllBackColor;
+    _wpSearchBarAllBackColor = wpSearchBarAllBackColor;
+}
+
+/**
+ 输入框背景颜色
+ */
+- (void)setWpSearchBarContentBackColor:(UIColor *)wpSearchBarContentBackColor {
+    _barTextField.backgroundColor  = wpSearchBarContentBackColor;
+    _wpSearchBarContentBackColor = wpSearchBarContentBackColor;
+}
+
+/**
+ 搜索按钮左边视图背景
+ */
+- (void)setWpSeachBarMainViewBackColor:(UIColor *)wpSeachBarMainViewBackColor {
+    _searchBackView.backgroundColor = wpSeachBarMainViewBackColor;
+    _wpSeachBarMainViewBackColor = wpSeachBarMainViewBackColor;
+}
+
+/**
+ 搜索主体圆角
+ */
+- (void)setWpSearchBarMainCornerRadius:(CGFloat)wpSearchBarMainCornerRadius {
+    _searchBackView.layer.cornerRadius = wpSearchBarMainCornerRadius;
+    _searchBackView.clipsToBounds = YES;
+    _wpSearchBarMainCornerRadius = wpSearchBarMainCornerRadius;
+}
 
 
 #pragma mark - UITextFieldDelegate 
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    if (self.searchBarDelegate && [self.searchBarDelegate respondsToSelector:@selector(wpSearchBarTextDidBeginEditing:)]) {
-        [self.searchBarDelegate wpSearchBarTextDidBeginEditing:self];
-        return;
-    }
-    
-}
-
+// 开始编辑
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     if (self.searchBarDelegate && [self.searchBarDelegate respondsToSelector:@selector(wpSearchBarTextDidEndEditing:)]) {
         [self.searchBarDelegate wpSearchBarTextDidEndEditing:self];
-        return;
-    }
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if (self.searchBarDelegate) {
-        if ([self.searchBarDelegate respondsToSelector:@selector(wpSearchBar:shouldChangeTextInRange:replacementText:)]) {
-            return [self.searchBarDelegate wpSearchBar:self shouldChangeTextInRange:range replacementText:string];
-        } else {
-            return YES;
-        }
     } else {
-        return YES;
+        if (self.beginEditingBlock) {
+            self.beginEditingBlock(self);
+        }
     }
 }
 
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-    if (self.searchBarDelegate && [self.searchBarDelegate respondsToSelector:@selector(wpSearchBarClickClearInfoButton:)]) {
-        [self.searchBarDelegate wpSearchBarClickClearInfoButton:self];
+// 是否可以修改内容
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if ([string isEqualToString:@"\n"] && _barKeyBoardReturnKeyCanDismiss) {
+        [_barTextField resignFirstResponder];
+        return NO;
+    }
+    if (self.searchBarDelegate && [self.searchBarDelegate respondsToSelector:@selector(wpSearchBar:shouldChangeTextInRange:replacementText:)]) {
+        return [self.searchBarDelegate wpSearchBar:self shouldChangeTextInRange:range replacementText:string];
+    } else {
+        if (self.shouldChangeBlock) {
+            return self.shouldChangeBlock(self, range, string);
+        } 
     }
     return YES;
 }
 
+// 是否可以清空
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    if (self.searchBarDelegate && [self.searchBarDelegate respondsToSelector:@selector(wpSearchBarClickClearInfoButton:)]) {
+        [self.searchBarDelegate wpSearchBarClickClearInfoButton:self];
+    } else {
+        if (self.clickClearBlock) {
+            self.clickClearBlock(self);
+        }
+    }
+    return YES;
+}
+    
+// 结束编辑
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    if (self.searchBarDelegate && [self.searchBarDelegate respondsToSelector:@selector(wpSearchBarTextDidBeginEditing:)]) {
+        [self.searchBarDelegate wpSearchBarTextDidBeginEditing:self];
+    } else {
+        if (self.endEditingBlock) {
+            self.endEditingBlock(self);
+        }
+    }
+}
 
 
+/**
+ 点击搜索按钮
+ */
 - (void)searchBarClick {
+    [_barTextField resignFirstResponder];
     if (self.searchBarDelegate && [self.searchBarDelegate respondsToSelector:@selector(wpSearchBarSearchButtonClicked:)]) {
         [self.searchBarDelegate wpSearchBarSearchButtonClicked:self];
-        return;
+    } else {
+        if (self.clickSearchBlock) {
+            self.clickSearchBlock(self);
+        }
     }
+}
+
+- (void)dealloc
+{
+    _barTextField.delegate = nil;
 }
 
 
